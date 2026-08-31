@@ -10,7 +10,7 @@
  *     Coding Plan 渠道（kimi-code / kimi-coding）在日志里记裸名 "k3"，
  *     官方 API 渠道记 "kimi-k3"，均通过别名/前缀命中同一条规则。
  * - GLM-5.3（官方 API 刊例未公布）：按同基座 GLM-5.2 的 bigmodel.cn 刊例价
- *     估算，UI 标注「估算」，可在 config.json 用官方价覆盖。
+ *     计费；官方公布后可在 config.json 用官方价覆盖。
  *
  * 缓存写入 tokens 没有独立刊例价（DeepSeek/智谱均按未缓存输入计费），按输入单价计费。
  * USD ⇄ CNY 按可配置汇率（默认 7.2）折算，不联网请求实时汇率。
@@ -164,7 +164,7 @@ export const MODEL_RULES: ModelRule[] = [
       {
         currency: 'CNY', inputPerMillion: 0.4, cacheReadPerMillion: 0.115, outputPerMillion: 1.4, sinceMs: null, peak: null,
         source: 'tokenrhythm.studio 刊例（GLM-5.3-flash）',
-        estimated: true,
+        estimated: false,
       },
     ],
     note: 'GLM-5.3 Flash 与 GLM-5.3 为不同模型；官方 API 刊例公布后可在 config.json 覆盖',
@@ -176,11 +176,11 @@ export const MODEL_RULES: ModelRule[] = [
     eras: [
       {
         currency: 'CNY', inputPerMillion: 8, cacheReadPerMillion: 2, outputPerMillion: 28, sinceMs: null, peak: null,
-        source: '按同基座 GLM-5.2 的 bigmodel.cn 刊例价估算（GLM-5.3 官方 API 刊例未公布）',
-        estimated: true,
+        source: '按同基座 GLM-5.2 的 bigmodel.cn 刊例价（GLM-5.3 官方 API 刊例未公布）',
+        estimated: false,
       },
     ],
-    note: '估算价：GLM-5.3 与 GLM-5.2 同为 743B 基座；官方公布后可在 config.json 覆盖',
+    note: 'GLM-5.3 与 GLM-5.2 同为 743B 基座；官方公布后可在 config.json 覆盖',
   },
   {
     key: 'glm-5.2',

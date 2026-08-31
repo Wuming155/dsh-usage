@@ -41,7 +41,33 @@ dsh-usage/
   - 优先使用项目依赖中的 `playwright` npm 包；
   - 未安装时回退使用全局 `@playwright/cli` 内置的 `playwright`。
 
-## 安装
+## 作为 DSH 插件安装
+
+本仓库即是一个 DSH（DeepSeek Harness）插件，推荐通过 **npm 包** 安装（包内已预编译 `lib/`，不受 pnpm 对 git 源的 build 限制影响）：
+
+```bash
+# 方式一：已发布的 npm 包（推荐）
+dsh plugin --profile web add @hsinsekai-nanami/dsh-usage@1.0.1
+
+# 方式二：本地预编译包（仓库内的 .tgz，已含 lib/）
+dsh plugin --profile web add file:<仓库根目录>/hsinsekai-nanami-dsh-usage-1.0.1.tgz
+```
+
+卸载与查看已安装插件：
+
+```bash
+dsh plugin --profile web remove @hsinsekai-nanami/dsh-usage
+dsh plugin --profile web list
+```
+
+> ⚠️ **不要使用 git 源安装**（`dsh plugin --profile web add github:Wuming155/dsh-usage` 或 `git+https://github.com/Wuming155/dsh-usage.git`）。
+> DSH 用 pnpm 管理插件，pnpm 默认禁止 git 源在安装时执行 build 脚本；而本插件入口 `main` 指向编译产物 `lib/`，
+> 未被编译会导致插件加载失败、DSH 无法启动。npm 包中的 `lib/` 是预构建好的，因此上面的方式最稳定。
+>
+> 若确须基于 git 源安装，需编辑 `C:\Users\<用户名>\.dsh\profiles\web\pnpm-workspace.yaml`，
+> 在 `allowBuilds` 中加入该 git 源的允许项（具体 key 以 pnpm 报错提示为准），再执行安装。
+
+## 本地开发环境（贡献者）
 
 ```bash
 npm install
