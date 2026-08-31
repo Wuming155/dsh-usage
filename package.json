@@ -87,12 +87,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Wuming155/dsh-usage-main.git"
+    "url": "git+https://github.com/Wuming155/dsh-usage.git"
   },
   "bugs": {
-    "url": "https://github.com/Wuming155/dsh-usage-main/issues"
+    "url": "https://github.com/Wuming155/dsh-usage/issues"
   },
-  "homepage": "https://github.com/Wuming155/dsh-usage-main#readme",
+  "homepage": "https://github.com/Wuming155/dsh-usage#readme",
   "publishConfig": {
     "access": "public"
   }
