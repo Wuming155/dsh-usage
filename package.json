@@ -1,0 +1,12 @@
+{
+  "name": "dsh-usage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update-prices": "node scripts/update-prices.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
