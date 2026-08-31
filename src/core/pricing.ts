@@ -157,6 +157,19 @@ export const MODEL_RULES: ModelRule[] = [
     note: '按官方美元刊例计费，人民币金额按汇率折算',
   },
   {
+    key: 'glm-5.3-flash',
+    label: 'GLM-5.3 Flash',
+    peakHours: null,
+    eras: [
+      {
+        currency: 'CNY', inputPerMillion: 0.4, cacheReadPerMillion: 0.115, outputPerMillion: 1.4, sinceMs: null, peak: null,
+        source: 'tokenrhythm.studio 刊例（GLM-5.3-flash）',
+        estimated: true,
+      },
+    ],
+    note: 'GLM-5.3 Flash 与 GLM-5.3 为不同模型；官方 API 刊例公布后可在 config.json 覆盖',
+  },
+  {
     key: 'glm-5.3',
     label: 'GLM-5.3',
     peakHours: null,
@@ -249,18 +262,41 @@ export function normalizeModelId(model: string | undefined | null): string {
   return (model ?? '').trim().toLowerCase()
 }
 
-/** 精确匹配（key 或别名）→ key/别名 前缀匹配（如 deepseek-v4-pro-0813 → deepseek-v4-pro、k3-0905 → kimi-k3）。 */
+/**
+ * 判断 dash 之后的尾段是否为「版本/构建号」，而非独立模型名。
+ * 只有版本型尾段（纯数字、日期，或 v+数字、点分版本号）才视为同模型的可计价变体，
+ * 否则（flash / max / pro / turbo 等词）视为独立模型，不继承父规则的单价。
+ */
+function isVersionSuffix(suffix: string): boolean {
+  return /^(v?\d+(\.\d+)*|\d{4,})$/i.test(suffix)
+}
+
+/**
+ * 精确匹配（key 或别名）→ 前缀匹配（仅版本号型尾段，如 deepseek-v4-pro-0813
+ * → deepseek-v4-pro、k3-0905 → kimi-k3；glm-5.3-flash 这类词尾段视为独立模型）。
+ * 同前缀取最长（更具体的模型规则优先），避免短 key 贪心吞掉长 key 的变体。
+ */
 export function matchRuleKey(model: string | undefined | null): string | null {
   const normalized = normalizeModelId(model)
   if (normalized === '') return null
   for (const rule of MODEL_RULES) {
     if (normalized === rule.key || rule.aliases?.includes(normalized)) return rule.key
   }
+  let bestKey: string | null = null
+  let bestLen = -1
   for (const rule of MODEL_RULES) {
-    const names = [rule.key, ...(rule.aliases ?? [])]
-    if (names.some((name) => normalized.startsWith(`${name}-`))) return rule.key
+    for (const name of [rule.key, ...(rule.aliases ?? [])]) {
+      const prefix = `${name}-`
+      if (!normalized.startsWith(prefix)) continue
+      const suffix = normalized.slice(prefix.length)
+      if (!isVersionSuffix(suffix)) continue
+      if (name.length > bestLen) {
+        bestLen = name.length
+        bestKey = rule.key
+      }
+    }
   }
-  return null
+  return bestKey
 }
 
 export interface ResolvedPrice {

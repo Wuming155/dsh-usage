@@ -93,6 +93,17 @@ test('未知模型返回 null；带日期后缀的模型按前缀匹配', () => 
   assert.equal(suffixed.entry.inputPerMillion, 9.0)
 })
 
+test('词尾段视为独立模型，不继承父规则（如 glm-5.3-flash ≠ glm-5.3）', () => {
+  // 词尾段（flash）不命中 glm-5.3 的前缀，转由其自身规则计价。
+  assert.equal(matchRuleKey('glm-5.3-flash'), 'glm-5.3-flash')
+  const flash = resolvePrice('glm-5.3-flash', at('2026-08-18T10:00:00+08:00'))
+  assert.equal(flash.ruleKey, 'glm-5.3-flash')
+  assert.equal(flash.entry.inputPerMillion, 0.4)
+  assert.equal(flash.entry.outputPerMillion, 1.4)
+  // 数字日期尾段仍正确继承父规则。
+  assert.equal(matchRuleKey('glm-5.3-20260817'), 'glm-5.3')
+})
+
 test('用户覆盖优先于内置目录', () => {
   const config = {
     version: 1,
